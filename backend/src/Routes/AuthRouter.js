@@ -63,10 +63,12 @@ AuthRouter.post(endpoints.login, async (req, res) => {
       process.env.SECRET_KEY
     );
 
+    const userDetails = await UserModel.findOne({ email });
     res.status(200).json({
       message: "Login Successful",
       data: {
         token,
+        userDetails,
       },
     });
   } catch (error) {
