@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Form, Button, Card } from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { signin } from "../redux/thunk";
 import "../Styles/auth.css"; // Import custom styles
+import { ApiStatus } from "../network/constants";
+import { Spin } from "antd";
 
 const SignIn = ({ setPage }) => {
+  const apiStatus = useSelector((state) => state.data.apiStatus);
   // State hooks to manage input values and other state variables
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -47,7 +50,6 @@ const SignIn = ({ setPage }) => {
       password: password,
     };
 
-    console.log(userData);
     const { success } = await dispatch(signin(userData)); // Dispatch signin action and get success status
     if (success) {
       setPage("login"); // If signin is successful, navigate to login page
@@ -134,6 +136,7 @@ const SignIn = ({ setPage }) => {
             variant="primary"
             type="submit"
             className="mt-4"
+            disabled={apiStatus === ApiStatus.pending}
             style={{
               width: "100%",
               backgroundColor: "#00F5E1",
@@ -142,6 +145,7 @@ const SignIn = ({ setPage }) => {
             }}
           >
             SIGN IN
+            {apiStatus === ApiStatus.pending && <Spin className="mx-2" />}
           </Button>
         </Form>
         <Button

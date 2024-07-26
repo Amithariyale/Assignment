@@ -7,15 +7,20 @@ const slice = createSlice({
     isLoggedIn: Boolean(localStorage.getItem("token")),
     userDetails: JSON.parse(localStorage.getItem("userDetails")),
     tableData: data,
+    apiStatus: "init",
   },
   reducers: {
-    setIsLoggedIn: (state, action) => {
+    setIsLoggedIn: (state) => {
       state.isLoggedIn = Boolean(localStorage.getItem("token"));
       state.userDetails = JSON.parse(localStorage.getItem("userDetails"));
+    },
+    setApiStatus: (state, action) => {
+      console.log(action);
+      state.apiStatus = action.payload.apiStatus;
     },
   },
 });
 
-export const { setIsLoggedIn } = slice.actions;
+export const { setIsLoggedIn, setApiStatus } = slice.actions;
 
 export default slice;

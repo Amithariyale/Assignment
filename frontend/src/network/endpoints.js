@@ -1,5 +1,5 @@
 // Define the base URL for the API
-const baseUrl = "http://localhost:8080";
+const baseUrl = "https://assignment-qtir.onrender.com";
 
 // Define an object to hold various API endpoints
 const Endpoints = {

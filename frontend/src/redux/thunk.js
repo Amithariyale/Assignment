@@ -1,12 +1,13 @@
-import { RequestMethods } from "../network/constants";
+import { ApiStatus, RequestMethods } from "../network/constants";
 import Endpoints from "../network/endpoints";
 import request from "../network/request";
-import { setIsLoggedIn } from "./slice";
+import { setApiStatus, setIsLoggedIn } from "./slice";
 import { notification } from "antd"; // Importing notification module from antd for showing notifications
 
 // Thunk function for user sign-in
 export function signin(userData) {
   return async function (dispatch) {
+    dispatch(setApiStatus({ apiStatus: ApiStatus.pending }));
     // Sending sign-in request to the server
     const { success, data } = await request({
       url: Endpoints.signup, // Endpoint for sign-up
@@ -20,12 +21,14 @@ export function signin(userData) {
       notification.success({
         message: "Sign In Successful",
       });
+      dispatch(setApiStatus({ apiStatus: ApiStatus.success }));
     } else {
       // If the request fails, show an error notification
       notification.error({
         message: "Sign In failed",
         description: typeof data === "string" ? data : "Try again...", // Show error message or a default message
       });
+      dispatch(setApiStatus({ apiStatus: ApiStatus.error }));
     }
 
     // Returning the success status for further use
@@ -36,6 +39,8 @@ export function signin(userData) {
 // Thunk function for user login
 export function login(userData) {
   return async function (dispatch) {
+    dispatch(setApiStatus({ apiStatus: ApiStatus.pending }));
+
     // Sending login request to the server
     const { success, data } = await request({
       url: Endpoints.login, // Endpoint for login
@@ -59,12 +64,14 @@ export function login(userData) {
 
       // Dispatch the action to update the logged-in state
       dispatch(setIsLoggedIn());
+      dispatch(setApiStatus({ apiStatus: ApiStatus.success }));
     } else {
       // If the request fails, show an error notification
       notification.error({
         message: "Sign In failed",
         description: typeof data === "string" ? data : "Try again...", // Show error message or a default message
       });
+      dispatch(setApiStatus({ apiStatus: ApiStatus.error }));
     }
 
     // Returning the success status for further use

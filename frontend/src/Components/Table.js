@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
 import { Table, Button, ButtonGroup } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { setIsLoggedIn } from "../redux/slice";
+import { notification } from "antd";
 
 const MyTable = () => {
   // Use useSelector to get the isLoggedIn state and tableData from the Redux store
@@ -10,6 +12,16 @@ const MyTable = () => {
 
   // Use useNavigate from react-router to programmatically navigate
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    localStorage.clear("token");
+    localStorage.clear("userDetails");
+    dispatch(setIsLoggedIn());
+    notification.success({
+      message: "Logout Successful",
+    });
+  };
 
   // Use useEffect to navigate to the auth page if the user is not logged in
   useEffect(() => {
@@ -69,6 +81,17 @@ const MyTable = () => {
           </tr>
         ))}
       </tbody>
+      <Button
+        onClick={handleLogout}
+        style={{
+          width: "100%",
+          backgroundColor: "#00F5E1",
+          borderColor: "#1ABC9C",
+          color: "#000000",
+        }}
+      >
+        Logout
+      </Button>
     </Table>
   );
 };
