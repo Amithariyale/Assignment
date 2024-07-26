@@ -1,26 +1,26 @@
 import React, { useState } from "react";
 import SignIn from "./Signin";
 import Login from "./Login";
-import { useSelector } from "react-redux";
-import MyTable from "./Table";
 
-const Home = () => {
+const Auth = () => {
+  // State hook to manage the current page ('signin' or 'login')
   const [currentPage, setCurrentPage] = useState("signin");
-  const isLoggedIn = useSelector((state) => state.data.isLoggedIn);
+
+  // Function to update the current page state
   const setPage = (pageName) => {
     setCurrentPage(pageName);
   };
-  return isLoggedIn ? (
-    <MyTable />
-  ) : (
+
+  return (
     <div
-      className="d-flex justify-content-center align-items-center "
+      className="d-flex justify-content-center align-items-center"
       style={{
         height: "100vh",
         width: "100vw",
         backgroundColor: "#007786",
       }}
     >
+      {/* Conditional rendering of SignIn or Login component based on currentPage state */}
       {currentPage === "signin" ? (
         <SignIn setPage={setPage} />
       ) : (
@@ -30,4 +30,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Auth;

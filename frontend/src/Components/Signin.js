@@ -2,18 +2,44 @@ import React, { useState } from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { signin } from "../redux/thunk";
-import "../Styles/signup.css";
+import "../Styles/auth.css"; // Import custom styles
 
 const SignIn = ({ setPage }) => {
-  const [email, setemail] = useState("");
+  // State hooks to manage input values and other state variables
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [dob, setDob] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({}); // State to track form validation errors
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); // Hook to dispatch actions to the Redux store
+
+  // Function to validate input fields
+  const validateInputs = () => {
+    const errors = {};
+    if (!name) errors.name = "Name is required"; // Check if name is provided
+    if (!email)
+      errors.email = "Email is required"; // Check if email is provided
+    else if (!/\S+@\S+\.\S+/.test(email)) errors.email = "Email is invalid"; // Check if email is in valid format
+    if (!dob) errors.dob = "Date of Birth is required"; // Check if date of birth is provided
+    if (!password)
+      errors.password = "Password is required"; // Check if password is provided
+    else if (password.length < 6)
+      errors.password = "Password must be at least 6 characters long"; // Check if password is at least 6 characters long
+    return errors;
+  };
+
+  // Function to handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission behavior
+    const validationErrors = validateInputs(); // Validate inputs
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors); // If there are validation errors, set them in the state
+      return;
+    }
+
+    // If inputs are valid, create user data object
     const userData = {
       name: name,
       email: email,
@@ -21,12 +47,16 @@ const SignIn = ({ setPage }) => {
       password: password,
     };
 
-    const { success } = await dispatch(signin(userData));
-    if (success) setPage("login");
-    setDob("0");
-    setName("");
-    setemail("");
-    setPassword("");
+    console.log(userData);
+    const { success } = await dispatch(signin(userData)); // Dispatch signin action and get success status
+    if (success) {
+      setPage("login"); // If signin is successful, navigate to login page
+      setDob(""); // Reset date of birth input
+      setName(""); // Reset name input
+      setEmail(""); // Reset email input
+      setPassword(""); // Reset password input
+    }
+    setErrors({}); //Reset Errords
   };
 
   return (
@@ -56,18 +86,21 @@ const SignIn = ({ setPage }) => {
               onChange={(e) => setName(e.target.value)}
             />
           </Form.Group>
-          <Form.Group className="group mt-3" controlId="formemail">
+          {errors.name && <p className="error-text">{errors.name}</p>}{" "}
+          {/* Display name error if exists */}
+          <Form.Group className="group mt-4" controlId="formEmail">
             <span className="material-icons">person</span>
             <span className="vertical-line"></span>
             <input
               type="text"
               placeholder="Email"
               value={email}
-              onChange={(e) => setemail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Form.Group>
-
-          <Form.Group controlId="formDob" className="group mt-3">
+          {errors.email && <p className="error-text">{errors.email}</p>}{" "}
+          {/* Display email error if exists */}
+          <Form.Group controlId="formDob" className="group mt-4">
             <span className="material-icons">calendar_month</span>
             <span className="vertical-line"></span>
             <input
@@ -76,8 +109,9 @@ const SignIn = ({ setPage }) => {
               onChange={(e) => setDob(e.target.value)}
             />
           </Form.Group>
-
-          <Form.Group controlId="formPassword" className="mt-3 group">
+          {errors.dob && <p className="error-text">{errors.dob}</p>}{" "}
+          {/* Display date of birth error if exists */}
+          <Form.Group controlId="formPassword" className="mt-4 group">
             <span className="material-icons">lock</span>
             <span className="vertical-line"></span>
             <input
@@ -94,7 +128,8 @@ const SignIn = ({ setPage }) => {
               {showPassword ? "visibility_off" : "visibility"}
             </span>
           </Form.Group>
-
+          {errors.password && <p className="error-text">{errors.password}</p>}{" "}
+          {/* Display password error if exists */}
           <Button
             variant="primary"
             type="submit"

@@ -82,3 +82,8 @@
   background: #3e4c59;
   clip-path: polygon(0 90%, 50% 100%, 100% 90%, 100% 100%, 0 100%);
 }
+.error-text {
+  color: red;
+  font-size: 0.8rem;
+  position: absolute;
+}

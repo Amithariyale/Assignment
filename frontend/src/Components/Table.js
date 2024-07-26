@@ -1,9 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Table, Button, ButtonGroup } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
 const MyTable = () => {
+  // Use useSelector to get the isLoggedIn state and tableData from the Redux store
+  const isLoggedIn = useSelector((state) => state.data.isLoggedIn);
   const data = useSelector((state) => state.data.tableData);
+
+  // Use useNavigate from react-router to programmatically navigate
+  const navigate = useNavigate();
+
+  // Use useEffect to navigate to the auth page if the user is not logged in
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate("../auth");
+      return;
+    }
+  }, [isLoggedIn, navigate]); // Add navigate as a dependency
+
   return (
     <Table striped bordered hover>
       <thead>
@@ -18,9 +33,10 @@ const MyTable = () => {
       </thead>
       <tbody>
         {data.map((user, index) => (
+          // Map over the data array to render each user row
           <tr key={user.id}>
             <td>{index + 1}</td>
-            <td className="d-flex gap-2 align-items-center">
+            <td className="d-flex gap-3 align-items-center">
               <img
                 style={{
                   width: "50px",
